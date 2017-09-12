@@ -1,0 +1,23 @@
+# Maven
+target/
+
+# Eclipse
+.classpath
+.project
+.settings/
+META-INF/
+build.properties
+plugin.xml
+
+#intelliJ
+*.iws
+*.ipr
+.idea
+*.iml
+build/
+
+*.uml
+classes/*
+
+# OSX
+.DS_Store
