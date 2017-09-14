@@ -17,4 +17,7 @@ cd target/exporter-distribution/exporter
 
 ````
 
-The exporter requires a config file and by default looks for `exporter.properties`
+The exporter requires a config file and by default looks for `exporter.properties`. An example is found [here][1]
+
+----
+[1]: https://github.com/NCIEVS/protege-server-export/blob/master/src/main/resources/config/exporter.properties
