@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+
+    <groupId>edu.stanford.protege</groupId>
+    <artifactId>protege-server-export</artifactId>
+    <version>1.0.0</version>
+    <packaging>bundle</packaging>
+
+    <name>Protege Server Export</name>
+    <description>Provides command line utility for exporting an existing ontology from a running server</description>
+
+    <organization>
+        <name>NCICB</name>
+        <url>http://gov.nih.nci/</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>GNU Lesser General Public License</name>
+            <url>http://www.gnu.org/copyleft/lesser.html</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>YinghuaXu2</id>
+            <name>Yinghua Xu</name>
+            <email>yinghua_1@yahoo.com</email>
+        </developer>
+        <developer>
+            <id>bdionne</id>
+            <name>Bob Dionne</name>
+            <email>dionne@dionne-assocites.com</email>
+        </developer>
+        
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:NCIEVS/protege-server-export.git</connection>
+        <developerConnection>scm:git:git@github.com:NCIEVS/protege-server-export.git</developerConnection>
+        <url>https://github.com/NCIEVS/protege-server-export</url>
+    </scm>
+
+    <properties>
+			<maven.compiler.source>1.8</maven.compiler.source>
+			<maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <protege-server.version>3.0.0-SNAPSHOT</protege-server.version>
+        <protege-client.version>3.0.0-SNAPSHOT</protege-client.version>
+    </properties>
+
+    <dependencies>
+   
+        <dependency>
+			<groupId>edu.stanford.protege</groupId>
+			<artifactId>protege-client</artifactId>
+			<version>${protege-client.version}</version>
+		</dependency>
+        <dependency>
+            <groupId>edu.stanford.protege</groupId>
+            <artifactId>protege-server</artifactId>
+            <version>${protege-server.version}</version>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>com.fasterxml.uuid</groupId>
+            <artifactId>java-uuid-generator</artifactId>
+            <version>${fasterxml-uuid.version}</version>
+        </dependency>
+        <dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
+			<version>3.6.0</version>
+		</dependency>
+		-->
+    </dependencies>
+
+    <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <!-- We need to build a working server before the integration tests. -->
+                        <id>create-server</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/main/assembly/server-as-directory.xml</descriptor>
+                            </descriptors>
+                            <outputDirectory>target</outputDirectory>
+                            <finalName>exporter</finalName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>3.0.1</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-ClassPath>.</Bundle-ClassPath>
+                        <Bundle-SymbolicName>${project.artifactId};singleton:=true</Bundle-SymbolicName>
+                        <Bundle-Version>${project.version}</Bundle-Version>
+                        <Bundle-Vendor>The Protege Development Team</Bundle-Vendor>
+                        <Export-Package>           
+                        </Export-Package>
+                        <Import-Package>
+                            org.protege.editor.owl.client.*;resolution:=optional,
+                            org.protege.editor.owl.server.*;resolution:=optional,
+                            *
+                        </Import-Package>
+                        <!-- Include-Resource>{maven-resources}</Include-Resource -->
+                    </instructions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+   <!-- Generate source and Javadoc JAR files, and sign artifacts. Required by Sonatype OSSRH for deployment. -->
+    <profiles>
+        <profile>
+            <id>release</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.4</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.10.3</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <failOnError>false</failOnError>
+                                    <quiet>true</quiet>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
