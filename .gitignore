@@ -21,3 +21,5 @@ classes/*
 
 # OSX
 .DS_Store
+
+.travis.yml
