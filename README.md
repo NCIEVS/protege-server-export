@@ -1,14 +1,20 @@
 Protege Server Exporter
 ======================
+A simple utility to be run from the command line, that connects to a running Protege server and exports a specified ontology to a file.
+
+To build:
+
+````
+mvn install
+````
+
+To run:
+
+````
+cd target/exporter-distribution/exporter
+
+./run.sh
 
 ````
 
-host=http://localhost
-port=8080
-username=<username>
-password=<password>
-project_id=<bf0c6b81-b103-4a8d-9b47-5e39517316fa>
-output_filename=<ontology_name.owl>
-output_format_type=<RDFXML>
-
-````
+The exporter requires a config file and by default looks for `exporter.properties`
